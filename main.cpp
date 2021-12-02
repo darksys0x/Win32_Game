@@ -1,7 +1,8 @@
 #include <stdio.h>
-#pragma warning(push,0)
+//#pragma warning(push,0)
 #include <Windows.h>
-#pragma warning(pop)
+#include <winbase.h>
+//#pragma warning(pop)
 
 
 
@@ -10,21 +11,24 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 // HINSTANCE hInstance : handle memory address input function to the main address
 //PSTR pointer to string long comand line
-int WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, PSTR CommnadLine, INT CmdShow)
+int WinMain(
+    _In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPSTR lpCmdLine,
+    _In_ int nShowCmd
+)
 {
-    UNREFERENCED_PARAMETER(Instance);
-    UNREFERENCED_PARAMETER(PrevInstance);
-    UNREFERENCED_PARAMETER(CommnadLine);
-    UNREFERENCED_PARAMETER(CmdShow);
 
 
     // this recive message 
 
-    WNDCLASSEXA WindowClass = { sizeof(WNDCLASSEXA) };
+    WNDCLASSEXA WindowClass;
+    memset(&WindowClass, 0, sizeof(WindowClass));
+
     HWND WindowHandle = 0;
 
 
-    //WindowClass.cbSize = sizeof(WNDCLASSEXA);
+    WindowClass.cbSize = sizeof(WNDCLASSEXA);
 
     WindowClass.style = 0;
 
@@ -34,7 +38,7 @@ int WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, PSTR CommnadLine, INT Cm
 
     WindowClass.cbWndExtra = 0;
 
-    WindowClass.hInstance = Instance;
+    WindowClass.hInstance = hInstance;
 
     WindowClass.hIcon = LoadIconA(NULL, IDI_APPLICATION);
 
@@ -54,7 +58,7 @@ int WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, PSTR CommnadLine, INT Cm
         return 0;
     }
 
-    WindowHandle = CreateWindowExA(WS_EX_CLIENTEDGE, WindowClass.lpszClassName,"The window Title", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 240, 120, NULL, NULL, Instance, NULL);
+    WindowHandle = CreateWindowExA(WS_EX_CLIENTEDGE, WindowClass.lpszClassName,"The window Title", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 240, 120, NULL, NULL, hInstance, NULL);
 
     if (WindowHandle == NULL) //if fails it will be return 0;
     {
