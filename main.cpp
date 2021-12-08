@@ -16,6 +16,13 @@ int WinMain(
 )
     
 {
+
+    if (Game_is_running() == TRUE) {
+
+        MessageBoxA(NULL, "Another instance of this program is already running!", "Error!", MB_ICONEXCLAMATION | MB_OK);
+        goto Exit;
+    }
+
     if (CreateMainGameWindow() != ERROR_SUCCESS) {
 
         goto Exit;
@@ -40,11 +47,14 @@ Exit:
 
 LRESULT CALLBACK MainWndProc(_In_ HWND WindowHandle, _In_ UINT Message, _In_ WPARAM WParam, _In_ LPARAM LParam)
 {
-
+    //char buf[12] = { 0 };
+    //_itoa(Message, buf, 10); //10 base 
+    //OutputDebugStringA(buf);
+    //OutputDebugStringA("\n");
     LRESULT Ruselt = 0; 
     switch (Message)
     {
-
+      
        case WM_CLOSE://If an application processes this message, it should return zero.
         {
            PostQuitMessage(0);
@@ -110,4 +120,20 @@ DWORD CreateMainGameWindow(void) {
     }
 Exit:
     return Ruselt;
+}
+
+BOOL Game_is_running(void) {
+    HANDLE Mutex = NULL;
+    Mutex = CreateMutexA(NULL, FALSE, GAME_NAME "_Hamad Game");
+    
+        if (GetLastError() == ERROR_ALREADY_EXISTS) {
+            return TRUE;
+        
+        }
+        else
+        {
+            return FALSE;
+        }
+
+
 }
