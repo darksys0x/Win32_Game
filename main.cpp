@@ -7,6 +7,9 @@
 
 
 
+_In_opt_ HWND gGameWindow;
+BOOL gGameIsRunning; 
+
 
 int WinMain(
     _In_ HINSTANCE Instance,
@@ -34,12 +37,21 @@ int WinMain(
   
 
     MSG Message; 
+    gGameIsRunning = TRUE;
+    while (gGameIsRunning == TRUE)// will keep the running untel the gGameIsRunning switch to False 
+    {
+        while (PeekMessageA(&Message, gGameWindow, 0, 0, PM_REMOVE)) {
 
-       while (GetMessageA(&Message, NULL, 0, 0) > 0)
-       {
-         TranslateMessage(&Message);
-         DispatchMessageA(&Message);
-       }
+            DispatchMessageA(&Message);
+
+
+        } //peekMessage is very similer to  getMessage accept peekmessage dosont block  implies
+
+        // processPlayerInput();
+       //  RenderFrameGraphics();
+    }
+
+      
 Exit:
     return 0;
 }
@@ -57,7 +69,8 @@ LRESULT CALLBACK MainWndProc(_In_ HWND WindowHandle, _In_ UINT Message, _In_ WPA
       
        case WM_CLOSE://If an application processes this message, it should return zero.
         {
-           PostQuitMessage(0);
+           gGameIsRunning == FALSE;
+           PostQuitMessage(0); // since the user hit the close butten that will change the "gGameIsRunning" to false 
            break;
         }
 
@@ -74,7 +87,6 @@ DWORD CreateMainGameWindow(void) {
     WNDCLASSEXA WindowClass;
     memset(&WindowClass, 0, sizeof(WindowClass));
 
-    HWND WindowHandle = 0;
 
 
     WindowClass.cbSize = sizeof(WNDCLASSEXA);
@@ -110,9 +122,9 @@ DWORD CreateMainGameWindow(void) {
         goto Exit;
     }
 
-    WindowHandle = CreateWindowExA(WS_EX_CLIENTEDGE, WindowClass.lpszClassName, "Hamad Game", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 240, 120, NULL, NULL, GetModuleHandle(NULL), NULL);
+    gGameWindow = CreateWindowExA(WS_EX_CLIENTEDGE, WindowClass.lpszClassName, "Hamad Game", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 240, 120, NULL, NULL, GetModuleHandle(NULL), NULL);
 
-    if (WindowHandle == NULL) //if fails it will be return 0;
+    if (gGameWindow == NULL) //if fails it will be return 0;
     {
         Ruselt = GetLastError();
         MessageBox(NULL, "Window Creation Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
